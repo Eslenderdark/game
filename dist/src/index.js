@@ -83,28 +83,51 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "dist/draw_board
 var salas = [];
 var users = {};
 // ------------------- Endpoints HTTP -------------------
+app.post('/guardarusuario', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var _a, name, email, error_1;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                _a = req.body, name = _a.name, email = _a.email;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, db.query("\n      INSERT INTO players (name, email) VALUES ('" + name + "', '" + email + "');\n    ")];
+            case 2:
+                _b.sent();
+                res.json({ message: 'Usuario guardado correctamente' });
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _b.sent();
+                console.error(error_1);
+                res.status(500).json({ error: 'Error guardando usuario' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
 // Obtener un jugador por ID
-app.get("/usuario/:email", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var email, query, db_response, err_1;
+app.get("/player/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, query, db_response, err_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                email = req.params.email;
-                console.log("Petición recibida para usuario", email);
+                id = req.params.id;
+                console.log("Petición recibida", id);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                query = "SELECT * FROM players WHERE id = '" + email + "'";
+                query = "SELECT * FROM players WHERE id = '" + id + "'";
                 return [4 /*yield*/, db.query(query)];
             case 2:
                 db_response = _a.sent();
                 if (db_response.rowCount === 1) {
-                    console.log("Usuario encontrado con el email: '" + email + "'.");
+                    console.log("Personaje encontrado con el id: '" + id + "'.");
                     res.json(db_response.rows[0]);
                 }
                 else {
-                    console.log("No se encontr\u00F3 el usuario con email " + email + ".");
-                    res.status(404).json({ error: true, message: "Usuario no encontrado" });
+                    console.log("No se encontr\u00F3 el personaje con ID " + id + ".");
+                    res.status(404).json({ error: true, message: "Player not found" });
                 }
                 return [3 /*break*/, 4];
             case 3:
@@ -116,25 +139,88 @@ app.get("/usuario/:email", function (req, res) { return __awaiter(void 0, void 0
         }
     });
 }); });
-app.post("/crearusuario", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var user, error_1;
+// Crear nuevo personaje
+app.post("/crearpersonaje", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var player, error_2;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                user = req.body;
-                console.log("Creando usuario", user);
+                player = req.body;
+                console.log("Creando personaje", player);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, db.query("\n      INSERT INTO players (id, name) VALUES ('" + user.id + "', '" + user.name + "');\n    ")];
+                return [4 /*yield*/, db.query("\n      INSERT INTO players (\n        id, name, heal_points, mana_point, strength,\n        magical_damage, defense, critical_chance, critical_damage,\n        experience, level, coins, personaje\n      ) VALUES (\n        '" + player.id + "', '" + player.name + "', " + player.hp + ", " + player.pc + ",\n        " + player.strength + ", " + player.magicDMG + ", " + player.defense + ",\n        " + player.crit_chance + ", " + player.crit_DMG + ", " + player.experience + ",\n        " + player.level + ", " + player.gold + ", '" + player.personaje + "'\n      );\n    ")];
             case 2:
                 _a.sent();
-                res.status(201).json({ message: "Usuario creado correctamente" });
+                res.status(201).json({ message: "Personaje creado correctamente" });
                 return [3 /*break*/, 4];
             case 3:
-                error_1 = _a.sent();
-                console.error("Error al crear el usuario:", error_1);
-                res.status(500).json({ error: "Error al crear el usuario" });
+                error_2 = _a.sent();
+                console.error("Error al crear el personaje:", error_2);
+                res.status(500).json({ error: "Error al crear el personaje" });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+// Obtener todos los personajes base
+app.get("/personajes", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var query, db_response, err_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 2, , 3]);
+                query = "SELECT * FROM personajes";
+                return [4 /*yield*/, db.query(query)];
+            case 1:
+                db_response = _a.sent();
+                if (db_response.rows.length > 0) {
+                    console.log("Se encontraron " + db_response.rows.length + " personajes.");
+                    res.json(db_response.rows);
+                }
+                else {
+                    console.log("No se encontraron personajes.");
+                    res.status(404).json({ message: "No characters found" });
+                }
+                return [3 /*break*/, 3];
+            case 2:
+                err_2 = _a.sent();
+                console.error("Error en la consulta:", err_2);
+                res.status(500).send("Internal Server Error");
+                return [3 /*break*/, 3];
+            case 3: return [2 /*return*/];
+        }
+    });
+}); });
+// Incrementar pases de personaje
+app.get("/passes/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var id, query, db_response, err_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                id = req.params.id;
+                console.log("Actualizando pases para el personaje", id);
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 3, , 4]);
+                query = "UPDATE personajes SET pases = pases + 1 WHERE id = " + id;
+                return [4 /*yield*/, db.query(query)];
+            case 2:
+                db_response = _a.sent();
+                if (db_response.rowCount === 1) {
+                    console.log("Pass actualizado para personaje con ID " + id + ".");
+                    res.json({ message: "Pases actualizados" });
+                }
+                else {
+                    console.log("No se encontr\u00F3 el personaje con ID " + id + ".");
+                    res.status(404).json({ message: "Personaje no encontrado" });
+                }
+                return [3 /*break*/, 4];
+            case 3:
+                err_3 = _a.sent();
+                console.error("Error en la consulta:", err_3);
+                res.status(500).send("Error interno del servidor");
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
         }

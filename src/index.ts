@@ -28,6 +28,23 @@ let users: { [key: string]: Set<{ nombre: string; personaje: string }> } = {};
 
 // ------------------- Endpoints HTTP -------------------
 
+
+app.post('/guardarusuario', async (req, res) => {
+  const { name, email } = req.body;
+
+  try {
+    await db.query(`
+      INSERT INTO players (name, email) VALUES ('${name}', '${email}');
+    `);
+    res.json({ message: 'Usuario guardado correctamente' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error guardando usuario' });
+  }
+});
+
+
+
 // Obtener un jugador por ID
 app.get("/player/:id", async (req, res) => {
   const id = req.params.id;
