@@ -83,29 +83,6 @@ app.use(express_1.default.static(path_1.default.join(__dirname, "dist/draw_board
 var salas = [];
 var users = {};
 // ------------------- Endpoints HTTP -------------------
-app.post('/guardarusuario', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, name, email, error_1;
-    return __generator(this, function (_b) {
-        switch (_b.label) {
-            case 0:
-                _a = req.body, name = _a.name, email = _a.email;
-                _b.label = 1;
-            case 1:
-                _b.trys.push([1, 3, , 4]);
-                return [4 /*yield*/, db.query("\n      INSERT INTO players (name, email) VALUES ('" + name + "', '" + email + "');\n    ")];
-            case 2:
-                _b.sent();
-                res.json({ message: 'Usuario guardado correctamente' });
-                return [3 /*break*/, 4];
-            case 3:
-                error_1 = _b.sent();
-                console.error(error_1);
-                res.status(500).json({ error: 'Error guardando usuario' });
-                return [3 /*break*/, 4];
-            case 4: return [2 /*return*/];
-        }
-    });
-}); });
 // Obtener un jugador por ID
 app.get("/player/:id", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var id, query, db_response, err_1;
@@ -141,7 +118,7 @@ app.get("/player/:id", function (req, res) { return __awaiter(void 0, void 0, vo
 }); });
 // Crear nuevo personaje
 app.post("/crearpersonaje", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var player, error_2;
+    var player, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -156,8 +133,8 @@ app.post("/crearpersonaje", function (req, res) { return __awaiter(void 0, void 
                 res.status(201).json({ message: "Personaje creado correctamente" });
                 return [3 /*break*/, 4];
             case 3:
-                error_2 = _a.sent();
-                console.error("Error al crear el personaje:", error_2);
+                error_1 = _a.sent();
+                console.error("Error al crear el personaje:", error_1);
                 res.status(500).json({ error: "Error al crear el personaje" });
                 return [3 /*break*/, 4];
             case 4: return [2 /*return*/];
